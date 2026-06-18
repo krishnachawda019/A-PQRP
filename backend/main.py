@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from backend.routers.market import router as market_router
 from backend.routers.upload import router as upload_router
+from backend.routers import profile
 
 app = FastAPI(
     title = "A-PQRP API",
@@ -9,9 +10,11 @@ app = FastAPI(
 
 app.include_router(market_router)
 app.include_router(upload_router)
+app.include_router(profile.router)
 
 @app.get("/")
 def root():
    return{
     "message":"Welcome to A-PQRP API"
     }
+
