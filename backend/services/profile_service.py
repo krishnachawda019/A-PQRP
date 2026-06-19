@@ -7,7 +7,6 @@ def get_dataset_summary(df):
     summary = {"Rows" : int(rows) , "Columns" : int(columns) , "Memory Usage" : int(df.memory_usage(deep = True).sum())}
     return summary
     
-
 def get_missing_values(df):
     result = df.isnull().sum().to_dict()
     return result
@@ -23,7 +22,7 @@ def get_data_types(df):
     return data_type_dict
 
 def get_basic_statistics(df):
-    statistics = df.describe().to_dict()
+    statistics = df.describe().where(pd.notnull(df.describe()), None).to_dict()
     return statistics
 
 def get_numeric_columns(df):
@@ -44,6 +43,33 @@ def get_unique_values(df):
         "Unique Values" : unique_values
     }
 
+def get_correlation_matrix(df):
+    correlation_matrix = df.select_dtypes(include = "number").corr().to_dict()
+    return {
+        "correlation_matrix" : correlation_matrix
+    }
+
+def detect_outliers(df):
+    numeric_df = df.select_dtypes(include = "number")
+    dict_1 = {}
+    for column in numeric_df.columns :
+        series = numeric_df[column].dropna()
+        if series.empty :
+            continue
+        q1 = series.quantile(0.25)
+        q3 = series.quantile(0.75)
+        iqr = q3 - q1
+        lower_bound = q1 - 1.5 * iqr
+        upper_bound = q3 + 1.5 * iqr
+        outlier = series[(series < lower_bound) | (series > upper_bound)].tolist()
+        dict_1[column] = {"count" : len(outlier),
+                          "values" : outlier ,
+                          "lower_bound" : lower_bound,
+                          "Upper_bound" : upper_bound}
+    return {
+        "outlier" : dict_1
+    }
+        
 def generate_profile(df):
     return{
         "summary" : get_dataset_summary(df),
@@ -53,5 +79,10 @@ def generate_profile(df):
         "basic_statistics" : get_basic_statistics(df),
         "numeric_columns" : get_numeric_columns(df),
         "categorical_columns" : get_categorical_columns(df),
-        "unique_values" : get_unique_values(df)
+        "unique_values" : get_unique_values(df),
+        "corrlation_matrix" : get_correlation_matrix(df),
+        "detect_outliers" : detect_outliers(df)
     }
+
+
+
