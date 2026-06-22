@@ -70,6 +70,44 @@ def detect_outliers(df):
         "outlier" : dict_1
     }
         
+def get_data_quality_score(df):
+    issues = []
+    outlier_columns = 0
+    missing_percentage = df.isnull().sum().sum() / (df.shape[0] * df.shape[1]) * 100
+    if missing_percentage != 0:
+        issues.append("Missing Values Detected")
+    quality_score = 100 - missing_percentage
+    duplicate_percentage = (df.duplicated().sum() / df.shape[0]) * 100
+    if duplicate_percentage != 0:
+        issues.append("Duplicate Values Detected")
+    quality_score -= duplicate_percentage
+    numeric_df = df.select_dtypes(include = "number")
+    for column in numeric_df.columns :
+        series = numeric_df[column].dropna()
+        if series.empty :
+            continue
+        q1 = series.quantile(0.25)
+        q3 = series.quantile(0.75)
+        iqr = q3 - q1
+        lower_bound = q1 - 1.5 * iqr
+        upper_bound = q3 + 1.5 * iqr
+        outlier = series[(series < lower_bound) | (series > upper_bound)].tolist()
+        if len(outlier) > 0:
+            outlier_columns += 1
+    outlier_percentage = (outlier_columns / len(numeric_df.columns)) * 100
+    if outlier_percentage != 0:
+        issues.append("Outliers Detected")
+    quality_score -= outlier_percentage
+    if not issues :
+        issues.append("No data quality issues detected")
+    return {
+        "qualtiy_score" : max(0 ,round(quality_score,2)),
+        "missing_percentage" : missing_percentage,
+        "duplicate_percentage" : duplicate_percentage,
+        "outlier_percentage" : outlier_percentage,
+        "issues" : issues
+    }
+
 def generate_profile(df):
     return{
         "summary" : get_dataset_summary(df),
@@ -81,7 +119,8 @@ def generate_profile(df):
         "categorical_columns" : get_categorical_columns(df),
         "unique_values" : get_unique_values(df),
         "corrlation_matrix" : get_correlation_matrix(df),
-        "detect_outliers" : detect_outliers(df)
+        "detect_outliers" : detect_outliers(df),
+        "data_quality_score" : get_data_quality_score(df)
     }
 
 
