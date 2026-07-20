@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from backend.services.market_service import get_market_data
-from backend.schemas.market_schema import MarketResponse
+from services.market_service import get_market_data
+from schemas.market_schema import MarketResponse
 
 router = APIRouter()
 

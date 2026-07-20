@@ -1,8 +1,103 @@
 import streamlit as st
-
-from components.header import show_header
+from pathlib import Path
+import yfinance as yf
+import requests
+from auth_guard import check_login
 from components.sidebar import show_sidebar
 
-show_header()
-page = show_sidebar()
-st.write(f"You selected :{page}")
+show_sidebar()
+check_login()
+
+# Page Config
+st.set_page_config(
+    page_title = "A-PQRP",
+    page_icon = "📈",
+    layout = "wide",
+    initial_sidebar_state = "expanded"
+)
+
+# Load CSS
+css_file = Path(__file__).parent / "assets" / "style.css"
+if css_file.exists() :
+    with open(css_file) as f :
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html = True)
+
+# Header
+col1, col2 = st.columns([1,6])
+with col1 :
+    logo = Path(__file__).parent / "assets" / "A-PQRP_logo.png"
+    if logo.exists() :
+        st.image(str(logo), width = 80)
+    else :
+        st.error(f"Logo not found: {logo}")    
+
+with col2 :
+    st.title("AI POWERED QUANT RESEARCH PLATFORM")
+    st.caption("Financial Dataset Profiling - Market Analysis - ML Prediction")
+st.divider()
+
+# SideBar
+st.sidebar.title("Navigation")
+st.sidebar.success("Select a page from the sidebar")
+
+# Upload
+st.header("Upload Dataset")
+
+uploaded_file = st.file_uploader("Choose a CSV or Excel file", type = ["csv", "xlsx"])
+if uploaded_file :
+    st.success(f"Uploaded : {uploaded_file.name}")
+    files = {
+        "file": (
+        uploaded_file.name,
+        uploaded_file.getvalue(),
+        uploaded_file.type
+        )
+    }
+    try :
+        upload_response = requests.post("http://127.0.0.1:8000/upload", files = files)
+        if upload_response.status_code == 200:
+            st.success("Dataset uploaded successfully!")
+            profile_response = requests.get("http://127.0.0.1:8000/profile")
+            if profile_response.status_code == 200 :
+                response_data = profile_response.json()
+                profile = response_data["profile"]
+                st.success("Profile generated successfully!")
+            else :
+                st.error(f"Status Code : {profile_response.status_code}")
+                st.write(profile_response.text)
+        else :
+            st.error(upload_response.text)                    
+    except Exception as e:
+        st.error(f"Connection Error :{e}")
+
+# Download dataset
+ticker = st.text_input("Enter Stock Symbol", "RELIANCE.NS")
+if st.button("Download Data") :
+    df = yf.download(ticker, period = "5y", auto_adjust = False, progress = False)
+    st.write("Rows downloaded :", len(df))
+    st.write(df.head())
+    try :
+        df.columns = df.columns.droplevel(1)
+    except :
+        pass    
+    df.reset_index(inplace = True)
+    Path("data").mkdir(exist_ok = True)
+    file_path = Path("data") / f"{ticker.replace('.', '_')}_5y.csv"
+    st.session_state["dataset_path"] = str(file_path)
+    st.write(st.session_state)
+    df.to_csv(file_path, index = False)
+    with open(file_path, "rb") as f:
+        response = requests.post("http://127.0.0.1:8000/upload", files = {"file": f})
+    if response.status_code == 200:
+        st.success("Dataset uploaded to backend successfully!")
+    else :
+        st.error(f"Upload failed : {response.text}")  
+    profile_response = requests.get("http://127.0.0.1:8000/profile")
+    if profile_response.status_code == 200:
+        profile = profile_response.json()
+        profile = profile["profile"]
+        st.success("Profile generated successfully")             
+    else :
+        st.error(profile_response.text)    
+    st.success(f"Dataset saved successfully!\n{file_path.resolve()}")
+    st.dataframe(df.head())

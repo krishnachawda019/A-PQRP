@@ -1,8 +1,8 @@
 import os 
 import shutil
 from fastapi import APIRouter, UploadFile, File
-from backend.schemas.upload_schema import UploadResponse
-from backend.services.upload_service import process_file
+from schemas.upload_schema import UploadResponse
+from services.upload_service import process_file
 
 router = APIRouter()
 UPLOAD_FOLDER = "data"

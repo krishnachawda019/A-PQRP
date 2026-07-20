@@ -1,7 +1,7 @@
 from fastapi import FastAPI
-from backend.routers.market import router as market_router
-from backend.routers.upload import router as upload_router
-from backend.routers import profile
+from routers.market import router as market_router
+from routers.upload import router as upload_router
+from routers import profile
 
 app = FastAPI(
     title = "A-PQRP API",

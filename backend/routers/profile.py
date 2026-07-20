@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from backend.services.upload_service import get_dataframe
-from backend.services.profile_service import generate_profile
+from services.upload_service import get_dataframe
+from services.profile_service import generate_profile
 
 router = APIRouter()
 
