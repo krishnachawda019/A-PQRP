@@ -4,7 +4,7 @@ import yfinance as yf
 import requests
 from auth_guard import check_login
 from components.sidebar import show_sidebar
-
+from frontend.config.settings import BACKEND_URL
 show_sidebar()
 check_login()
 
@@ -54,10 +54,10 @@ if uploaded_file :
         )
     }
     try :
-        upload_response = requests.post("http://127.0.0.1:8000/upload", files = files)
+        upload_response = requests.post(f"{BACKEND_URL}/upload", files = files)
         if upload_response.status_code == 200:
             st.success("Dataset uploaded successfully!")
-            profile_response = requests.get("http://127.0.0.1:8000/profile")
+            profile_response = requests.get(f"BACKEND_URL/profile")
             if profile_response.status_code == 200 :
                 response_data = profile_response.json()
                 profile = response_data["profile"]
@@ -87,12 +87,12 @@ if st.button("Download Data") :
     st.write(st.session_state)
     df.to_csv(file_path, index = False)
     with open(file_path, "rb") as f:
-        response = requests.post("http://127.0.0.1:8000/upload", files = {"file": f})
+        response = requests.post(f"{BACKEND_URL}/upload", files = {"file": f})
     if response.status_code == 200:
         st.success("Dataset uploaded to backend successfully!")
     else :
         st.error(f"Upload failed : {response.text}")  
-    profile_response = requests.get("http://127.0.0.1:8000/profile")
+    profile_response = requests.get(f"{BACKEND_URL}/profile")
     if profile_response.status_code == 200:
         profile = profile_response.json()
         profile = profile["profile"]
