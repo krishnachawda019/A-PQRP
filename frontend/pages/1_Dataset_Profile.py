@@ -3,14 +3,14 @@ import requests
 
 from auth_guard import check_login
 from components.sidebar import show_sidebar
-
+from frontend.config.settings import BACKEND_URL
 show_sidebar()
 check_login()
 
 st.title("📋 Dataset Profile")
 
 try:
-    profile_response = requests.get("http://127.0.0.1:8000/profile")
+    profile_response = requests.get(f"{BACKEND_URL}/profile")
     profile_response.raise_for_status()
     profile = profile_response.json()["profile"]
 

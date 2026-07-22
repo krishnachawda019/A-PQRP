@@ -1,2 +1,2 @@
-BACKED_URL = "http://127.0.0.1:8000"
+BACKED_URL = "http://a-pqrp-1.onrender.com"
 PAGE_TITLE = "A-PQRP"
