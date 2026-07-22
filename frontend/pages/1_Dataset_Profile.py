@@ -3,7 +3,7 @@ import requests
 
 from auth_guard import check_login
 from components.sidebar import show_sidebar
-from frontend.config.settings import BACKEND_URL
+from config.settings import BACKEND_URL
 show_sidebar()
 check_login()
 
