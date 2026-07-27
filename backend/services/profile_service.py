@@ -109,11 +109,23 @@ def detect_outliers(df):
 def get_data_quality_score(df):
     issues = []
     outlier_columns = 0
-    missing_percentage = df.isnull().sum().sum() / (df.shape[0] * df.shape[1]) * 100
+    total_cells = df.shape[0] * df.shape[1]
+
+    if total_cells == 0:
+        missing_percentage = 0
+    else:
+        missing_percentage = (
+        df.isnull().sum().sum() / total_cells
+    ) * 100
     if missing_percentage != 0:
         issues.append("Missing Values Detected")
     quality_score = 100 - missing_percentage
-    duplicate_percentage = (df.duplicated().sum() / df.shape[0]) * 100
+    if df.shape[0] == 0:
+        duplicate_percentage = 0
+    else:
+        duplicate_percentage = (
+        df.duplicated().sum() / df.shape[0]
+    ) * 100
     if duplicate_percentage != 0:
         issues.append("Duplicate Values Detected")
     quality_score -= duplicate_percentage
@@ -130,7 +142,10 @@ def get_data_quality_score(df):
         outlier = series[(series < lower_bound) | (series > upper_bound)].tolist()
         if len(outlier) > 0:
             outlier_columns += 1
-    outlier_percentage = (outlier_columns / len(numeric_df.columns)) * 100
+    if len(numeric_df.columns) == 0:
+        outlier_percentage = 0
+    else:
+        outlier_percentage = (outlier_columns / len(numeric_df.columns)) * 100
     if outlier_percentage != 0:
         issues.append("Outliers Detected")
     quality_score -= outlier_percentage
