@@ -3,7 +3,10 @@ import pandas as pd
 import plotly.graph_objects as go
 import joblib
 import os
+import sys
 
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+sys.path.append(ROOT_DIR)
 from backend.models.ml_prediction import train_model
 from components.sidebar import show_sidebar
 
