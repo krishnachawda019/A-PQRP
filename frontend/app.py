@@ -2,11 +2,9 @@ import streamlit as st
 from pathlib import Path
 import yfinance as yf
 import requests
-from auth_guard import check_login
 from components.sidebar import show_sidebar
 from config.settings import BACKEND_URL
 show_sidebar()
-check_login()
 
 # Page Config
 st.set_page_config(

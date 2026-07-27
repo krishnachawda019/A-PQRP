@@ -14,7 +14,6 @@ from reportlab.lib.colors import navy
 from reportlab.platypus import Table, TableStyle
 from reportlab.lib import colors
 from datetime import datetime
-from auth_guard import check_login
 from components.sidebar import show_sidebar
 
 
@@ -36,7 +35,6 @@ from auth_guard import check_login
 from components.sidebar import show_sidebar
 
 show_sidebar()
-check_login()
 
 # Read    
 csv_path = st.session_state["dataset_path"]

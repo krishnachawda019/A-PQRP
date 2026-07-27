@@ -5,11 +5,9 @@ import joblib
 import os
 
 from backend.models.ml_prediction import train_model
-from auth_guard import check_login
 from components.sidebar import show_sidebar
 
 show_sidebar()
-check_login()
 
 st.title("📈 XGBoost Stock Prediction")
 

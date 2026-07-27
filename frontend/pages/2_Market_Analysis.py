@@ -4,11 +4,9 @@ import plotly.graph_objects as go
 import ta
 from pathlib import Path       
 from plotly.subplots import make_subplots
-from auth_guard import check_login
 from components.sidebar import show_sidebar
 
 show_sidebar()
-check_login()
 
 st.title("📈 Market Analysis")
 if "dataset_path" not in st.session_state :
