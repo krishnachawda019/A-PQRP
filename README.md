@@ -196,3 +196,15 @@ No license has been specified yet. Add a `LICENSE` file to clarify how others ma
 
 - Sample dataset sourced from a public stock market dataset on Kaggle
 - Market data powered by [yfinance](https://github.com/ranaroussi/yfinance)
+<img width="1039" height="700" alt="Screenshot 2026-08-02 at 8 30 18 PM" src="https://github.com/user-attachments/assets/92e34ce4-a084-4a21-aba7-7a27e684a38d" />
+<img width="1000" height="491" alt="Screenshot 2026-08-02 at 8 30 05 PM" src="https://github.com/user-attachments/assets/8615c4dd-653a-4106-90db-71c28db522c6" />
+<img width="1141" height="459" alt="Screenshot 2026-08-02 at 8 29 46 PM" src="https://github.com/user-attachments/assets/2d22f205-3bd4-40de-a55d-af32a3ec1e2c" />
+<img width="1141" height="788" alt="Screenshot 2026-08-02 at 8 29 33 PM" src="https://github.com/user-attachments/assets/061bb216-bbc2-430d-9837-c76365ae0657" />
+<img width="1178" height="789" alt="Screenshot 2026-08-02 at 8 29 04 PM" src="https://github.com/user-attachments/assets/adb72896-1f9c-456d-abee-36bacb388d1b" />
+<img width="1144" height="744" alt="Screenshot 2026-08-02 at 8 28 51 PM" src="https://github.com/user-attachments/assets/43c022b2-3191-4ecd-8220-c54535514a95" />
+<img width="1411" height="749" alt="Screenshot 2026-08-02 at 8 28 38 PM" src="https://github.com/user-attachments/assets/b9b71f3f-99cf-4208-bfea-090645c20f7c" />
+<img width="1115" height="613" alt="Screenshot 2026-08-02 at 8 28 22 PM" src="https://github.com/user-attachments/assets/18a86e85-088f-4cdc-bacc-175470e54270" />
+<img width="1437" height="644" alt="Screenshot 2026-08-02 at 8 28 12 PM" src="https://github.com/user-attachments/assets/6544b8f2-cb5c-4958-9fd4-b7d61c3962ba" />
+<img width="1422" height="794" alt="Screenshot 2026-08-02 at 8 26 57 PM" src="https://github.com/user-attachments/assets/a21439cd-4162-46ac-acba-411da74e0518" />
+<img width="1172" height="519" alt="Screenshot 2026-08-02 at 8 26 29 PM" src="https://github.com/user-attachments/assets/8170a0be-d2f7-4299-bab1-57ee73e77bc9" />
+<img width="1455" height="749" alt="Screenshot 2026-08-02 at 8 26 05 PM" src="https://github.com/user-attachments/assets/2a37a404-f043-40e8-831a-fddd2cb91bd8" />
