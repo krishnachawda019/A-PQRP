@@ -20,8 +20,10 @@ css_file = Path(__file__).parent / "assets" / "style.css"
 if css_file.exists() :
     with open(css_file) as f :
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html = True)
-uploaded_file = st.file_uploader("Upload CSV", type = ["csv"])
-if uploaded_file is not None :
+uploaded_file = st.file_uploader("Upload CSV", type=["csv"])
+
+if uploaded_file is not None:
+
     files = {
         "file": (
             uploaded_file.name,
@@ -29,21 +31,40 @@ if uploaded_file is not None :
             "text/csv"
         )
     }
-# Health Check
-with st.spinner("🔄Starting backend server... Please wait"):
-    backend_ready = False
 
-for _ in range(6): # wait upto 30 seconds
-    try :
-        upload_response = requests.post(f"{BACKEND_URL}/upload", files = files, timeout = 90)
-    except requests.exceptions.RequestException:
-        st.warning("Backend is waking up... Please wait 20 seconds.")
-        time.sleep(20)
-        upload_response = requests.post(f"{BACKEND_URL}/uppload", files = files, timeout = 90)
-if not backend_ready:
-    st.warning("Backend is waking up..")
-    if st.button("Retry Connection"):
-        st.rerun()
+    with st.spinner("Uploading file and waking backend if required..."):
+
+        upload_response = None
+
+        for attempt in range(6):   # Retry for about 30 seconds
+            try:
+                upload_response = requests.post(
+                    f"{BACKEND_URL}/upload",
+                    files=files,
+                    timeout=90
+                )
+
+                if upload_response.status_code == 200:
+                    break
+
+            except requests.exceptions.RequestException:
+                pass
+
+            st.info("Backend is starting... Please wait.")
+            time.sleep(5)
+
+        if upload_response is None:
+            st.error("Unable to connect to backend.")
+            st.stop()
+
+        if upload_response.status_code != 200:
+            st.error(f"Upload failed: {upload_response.text}")
+            st.stop()
+
+        upload_result = upload_response.json()
+        st.success("File uploaded successfully!")
+
+        dataset_path = upload_result["dataset_path"]
 
 
 
