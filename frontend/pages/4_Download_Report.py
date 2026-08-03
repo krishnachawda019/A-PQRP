@@ -44,6 +44,7 @@ df = pd.read_csv(csv_path)
 def generate_report() :
     # Cover Page
     story = []
+    stock_name = st.session_state.get("stock_symbol", "Unknown Stock")
     styles = getSampleStyleSheet()
     title = ParagraphStyle("TitleStyle", 
                            parent = styles["Title"],
@@ -54,6 +55,18 @@ def generate_report() :
     story.append(Paragraph("A-PQRP", title))
     story.append(Paragraph("AI Powered Quant Research Platform", styles["Heading1"]))
     story.append(Paragraph("Financial Analysis Report", styles["Heading2"]))
+    story.append(
+        Paragraph(
+            f"<b>Stock Analysed : </b>{stock_name}",
+            styles["Heading2"]
+        )
+    )
+    story.append(
+        Paragraph(
+            f"<b>Analysis Date : </b>{datetime.now().strftime('%d %B %Y')}",
+            styles["Normal"]
+        )
+    )
     story.append(Spacer(1,30))
     story.append(Paragraph(f"Generated on : {datetime.now().strftime('%d %B %Y %H : %M')}", styles["Normal"]))
     story.append(PageBreak())
