@@ -9,10 +9,10 @@ import os
 from components.sidebar import show_sidebar
 from config.settings import BACKEND_URL
 
-# ---------------------- Sidebar ----------------------
+# Sidebar 
 show_sidebar()
 
-# ---------------------- Page Config ----------------------
+# Page Config
 st.set_page_config(
     page_title="A-PQRP",
     page_icon="📈",
@@ -20,14 +20,14 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# ---------------------- Load CSS ----------------------
+# Load CSS 
 css_file = Path(__file__).parent / "assets" / "style.css"
 
 if css_file.exists():
     with open(css_file) as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-# ---------------------- File Upload ----------------------
+# File Upload 
 uploaded_file = st.file_uploader(
     "Upload CSV",
     type=["csv"]
@@ -77,7 +77,8 @@ if uploaded_file:
     upload_result = upload_response.json()
     dataset_path = upload_result["dataset_path"]
 
-    st.success("✅ Dataset uploaded successfully!")    with st.spinner("Uploading file and waking backend if required..."):
+    st.success("✅ Dataset uploaded successfully!")    
+    with st.spinner("Uploading file and waking backend if required..."):
 
         upload_response = None
 
