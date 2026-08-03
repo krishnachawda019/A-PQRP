@@ -28,8 +28,9 @@ for _ in range(6): # wait upto 30 seconds
     except requests.exceptions.RequestException:
         time.sleep(5)
 if not backend_ready:
-    st.error("Backend is still starting. Please refresh after a few seconds")
-    st.stop()
+    st.warning("Backend is waking up..")
+    if st.button("Retry Connection"):
+        st.rerun()
 
 # Load CSS
 css_file = Path(__file__).parent / "assets" / "style.css"
