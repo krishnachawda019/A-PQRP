@@ -121,7 +121,7 @@ ticker = st.text_input("Enter Stock Symbol", "RELIANCE.NS")
 if st.button("Download Data") :
     file_path = os.path.join("data", file.filename)
     with open(file_path,"wb") as f:
-        f.write(await file.read())
+        f.write(file.read())
     df = pd.read_csv(file_path)
     return {
         "dataset_path" : file_path,
