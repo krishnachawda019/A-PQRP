@@ -121,7 +121,7 @@ ticker = st.text_input("Enter Stock Symbol", "RELIANCE.NS")
 if st.button("Download Data") :
     file_path = os.path.join("data", ticker+"_5y.csv")
     with open(file_path,"wb") as f:
-        f.write(df_download.to_csv(index = False).encode()
+        f.write(df_download.to_csv(index = False).encode())
     df = pd.read_csv(file_path)
     st.write("Rows downloaded :", len(df))
     st.write(df.head())
