@@ -427,6 +427,7 @@ def generate_financial_recommendations(profile):
     return {"financial_recommendations" : recommendations}            
 
 def generate_profile(df):
+  try :
         profile = {
         "dataset_summary" : get_dataset_summary(df),
         "missing_values" : get_missing_values(df),
@@ -452,4 +453,7 @@ def generate_profile(df):
         }
         profile["financial_recommendations"] = generate_financial_recommendations(profile)
         return profile
+except Exception as e:
+        print("PROFILE ERROR : ",e)
+        raise
 
