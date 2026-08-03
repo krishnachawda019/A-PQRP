@@ -119,7 +119,14 @@ if uploaded_file :
 # Download dataset
 ticker = st.text_input("Enter Stock Symbol", "RELIANCE.NS")
 if st.button("Download Data") :
-    df = yf.download(ticker, period = "5y", auto_adjust = False, progress = False)
+    file_path = os.path.join("data", file.filename)
+    with open(file_path,"wb") as f:
+        f.write(await file.read())
+    df = pd.read_csv(file_path)
+    return {
+        "dataset_path" : file_path,
+        "rows" : len(df)
+    }
     st.write("Rows downloaded :", len(df))
     st.write(df.head())
     try :
