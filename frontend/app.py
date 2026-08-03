@@ -180,5 +180,30 @@ if st.button("Download Data"):
         st.success("Dataset Ready")
 
         st.write(f"Rows : {len(df)}")
-
         st.dataframe(df.head())
+
+        # Upload downloaded dataset to backend
+        from io import BytesIO
+
+        csv_buffer = BytesIO()
+        df.to_csv(csv_buffer, index=False)
+        csv_buffer.seek(0)
+
+        files = {
+            "file": (
+                f"{ticker.replace('.', '_')}_5y.csv",
+                csv_buffer.getvalue(),
+                "text/csv"
+            )
+        }
+
+        upload_response = requests.post(
+            f"{BACKEND_URL}/upload",
+            files=files,
+            timeout=90
+        )
+
+        if upload_response.status_code == 200:
+            st.success("Dataset uploaded to backend successfully.")
+        else:
+            st.error(upload_response.text)
