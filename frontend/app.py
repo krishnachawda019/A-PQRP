@@ -1,30 +1,39 @@
 import streamlit as st
 from pathlib import Path
-import yfinance as yf
 import requests
 import time
+import pandas as pd
+import yfinance as yf
+import os
+
 from components.sidebar import show_sidebar
 from config.settings import BACKEND_URL
-import os
-import pandas as pd
+
+# ---------------------- Sidebar ----------------------
 show_sidebar()
 
-# Page Config
+# ---------------------- Page Config ----------------------
 st.set_page_config(
-    page_title = "A-PQRP",
-    page_icon = "📈",
-    layout = "wide",
-    initial_sidebar_state = "expanded"
+    page_title="A-PQRP",
+    page_icon="📈",
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
-# Load CSS
+# ---------------------- Load CSS ----------------------
 css_file = Path(__file__).parent / "assets" / "style.css"
-if css_file.exists() :
-    with open(css_file) as f :
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html = True)
-uploaded_file = st.file_uploader("Upload CSV", type=["csv"])
 
-if uploaded_file is not None:
+if css_file.exists():
+    with open(css_file) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+# ---------------------- File Upload ----------------------
+uploaded_file = st.file_uploader(
+    "Upload CSV",
+    type=["csv"]
+)
+
+if uploaded_file:
 
     files = {
         "file": (
@@ -34,7 +43,41 @@ if uploaded_file is not None:
         )
     }
 
-    with st.spinner("Uploading file and waking backend if required..."):
+    upload_response = None
+
+    with st.spinner("Uploading file... Backend may take a few seconds to wake up."):
+
+        for attempt in range(6):   # Retry for ~30 seconds
+
+            try:
+                upload_response = requests.post(
+                    f"{BACKEND_URL}/upload",
+                    files=files,
+                    timeout=90
+                )
+
+                if upload_response.status_code == 200:
+                    break
+
+            except requests.exceptions.RequestException:
+                pass
+
+            if attempt < 5:
+                st.info("Backend is starting... Retrying in 5 seconds.")
+                time.sleep(5)
+
+    if upload_response is None:
+        st.error("Unable to connect to the backend.")
+        st.stop()
+
+    if upload_response.status_code != 200:
+        st.error(f"Upload failed:\n{upload_response.text}")
+        st.stop()
+
+    upload_result = upload_response.json()
+    dataset_path = upload_result["dataset_path"]
+
+    st.success("✅ Dataset uploaded successfully!")    with st.spinner("Uploading file and waking backend if required..."):
 
         upload_response = None
 
