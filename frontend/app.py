@@ -176,6 +176,7 @@ if st.button("Download Data"):
         st.session_state["dataset_path"] = (
             f"data/{ticker.replace('.', '_')}_5y.csv"
         )
+        st.session_state["stock_symbol"] = ticker
 
         st.success("Dataset Ready")
 
