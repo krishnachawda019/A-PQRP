@@ -18,3 +18,11 @@ def root():
     "message":"Welcome to A-PQRP API"
     }
 
+@app.get("/health")
+def health():
+    return{
+        "status" : "Backend is running"
+    }
+
+
+
