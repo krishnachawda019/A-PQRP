@@ -109,16 +109,16 @@ stocks = [
 ]
 
 ticker = st.selectbox("Select Stock", stocks)
-    # Generate profile
-    profile_response = requests.get(
-        f"{BACKEND_URL}/profile",
-        timeout=120
-    )
+# Generate profile
+profile_response = requests.get(
+    f"{BACKEND_URL}/profile",
+    timeout=120
+)
 
-    if profile_response.status_code == 200:
-        st.success("✅ Dataset profile generated.")
-    else:
-        st.warning(profile_response.text)
+if profile_response.status_code == 200:
+    st.success("✅ Dataset profile generated.")
+else:
+    st.warning(profile_response.text)
 
 # DOWNLOAD STOCK DATA 
 
