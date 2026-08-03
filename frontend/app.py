@@ -37,6 +37,7 @@ for _ in range(6): # wait upto 30 seconds
     try :
         upload_response = requests.post(f"{BACKEND_URL}/upload", files = files, timeout = 90)
     except requests.exceptions.RequestException:
+        st.warning("Backend is waking up... Please wait 20 seconds.")
         time.sleep(20)
         upload_response = requests.post(f"{BACKEND_URL}/uppload", files = files, timeout = 90)
 if not backend_ready:
