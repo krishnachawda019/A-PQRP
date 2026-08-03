@@ -1,9 +1,7 @@
 import os
 import pandas as pd
 
-current_df = None
 def process_file(file_path: str):
-    global current_df
     extension = os.path.splitext(file_path)[1].lower()
 
     if extension == ".csv":
@@ -12,7 +10,6 @@ def process_file(file_path: str):
         df = pd.read_excel(file_path)
     else:
         raise ValueError("Unsupported File Format")
-    current_df = df
     return{
         "filename": os.path.basename(file_path),
         "rows": len(df),
@@ -21,5 +18,3 @@ def process_file(file_path: str):
         "status": "success"
     }
 
-def get_dataframe():
-    return current_df
