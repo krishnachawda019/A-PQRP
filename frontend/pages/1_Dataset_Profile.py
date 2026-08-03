@@ -10,8 +10,13 @@ st.title("📋 Dataset Profile")
 try:
     profile_response = requests.get(f"{BACKEND_URL}/profile")
     profile_response.raise_for_status()
-    profile = profile_response.json()["profile"]
-
+    response = profile_response.json()
+    st.write(response)
+    if response.get("status") == "success":
+        profile = response["profile"]
+    else :
+        st.error(response.get("message", "Unknown error"))
+        st.stop()
 except Exception as e:
     st.error(f"Unable to load profile: {e}")
     st.stop()
