@@ -5,6 +5,8 @@ import requests
 import time
 from components.sidebar import show_sidebar
 from config.settings import BACKEND_URL
+import os
+import pandas as pd
 show_sidebar()
 
 # Page Config
