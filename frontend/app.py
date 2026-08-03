@@ -20,13 +20,10 @@ with st.spinner("🔄Starting backend server... Please wait"):
 
 for _ in range(6): # wait upto 30 seconds
     try :
-        response = requests.get(f"{BACKEND_URL}/health", timeout = 10)
-        if response.status_code == 200:
-            backend_ready = True
-            st.success("✅Backend Connected")
-            break
+        upload_response = requests.post(f"{BACKEND_URL}/upload", files = files, timeout = 90)
     except requests.exceptions.RequestException:
-        time.sleep(5)
+        time.sleep(20)
+        upload_response = requests.post(f"{BACKEND_URL}/uppload", files = files, timeout = 90)
 if not backend_ready:
     st.warning("Backend is waking up..")
     if st.button("Retry Connection"):
