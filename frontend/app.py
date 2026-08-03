@@ -2,6 +2,7 @@ import streamlit as st
 from pathlib import Path
 import yfinance as yf
 import requests
+import time
 from components.sidebar import show_sidebar
 from config.settings import BACKEND_URL
 show_sidebar()
@@ -13,6 +14,22 @@ st.set_page_config(
     layout = "wide",
     initial_sidebar_state = "expanded"
 )
+# Health Check
+with st.spinner("🔄Starting backend server... Please wait"):
+    backend_ready = False
+
+for _ in range(6): # wait upto 30 seconds
+    try :
+        response = requests.get(f"{BACKEND_URL}/health", timeout = 10)
+        if response.status_code == 200:
+            backend_ready = True
+            st.success("✅Backend Connected")
+            break
+    except requests.exceptions.RequestException:
+        time.sleep(5)
+if not backend_ready:
+    st.error("Backend is still starting. Please refresh after a few seconds")
+    st.stop()
 
 # Load CSS
 css_file = Path(__file__).parent / "assets" / "style.css"
