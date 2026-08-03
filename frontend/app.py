@@ -6,6 +6,7 @@ import pandas as pd
 import requests
 import streamlit as st
 
+import yfinance as yf
 from components.sidebar import show_sidebar
 from config.settings import BACKEND_URL
 
@@ -94,7 +95,20 @@ if uploaded_file is not None:
     st.session_state["dataset_path"] = upload_result["dataset_path"]
 
     st.success("✅ Dataset uploaded successfully!")
+stocks = [
+    "RELIANCE.NS",
+    "TCS.NS",
+    "INFY.NS",
+    "SBIN.NS",
+    "HDFCBANK.NS",
+    "ICICIBANK.NS",
+    "ITC.NS",
+    "LT.NS",
+    "AXISBANK.NS",
+    "BHARTIARTL.NS"
+]
 
+ticker = st.selectbox("Select Stock", stocks)
     # Generate profile
     profile_response = requests.get(
         f"{BACKEND_URL}/profile",
@@ -107,96 +121,65 @@ if uploaded_file is not None:
         st.warning(profile_response.text)
 
 # DOWNLOAD STOCK DATA 
-TWELVE_DATA_API_KEY = "47962a3fa52846e39013254eb698cb1c"
-st.header("Download Stock Dataset")
 
-ticker = st.text_input(
-    "Enter NSE Symbol",
-    "RELIANCE.NSE"
-)
+
+ticker = st.text_input("Enter NSE Symbol", "RELIANCE.NS")
 
 if st.button("Download Data"):
 
-    with st.spinner("Downloading data from Twelve Data..."):
+    Path("data").mkdir(exist_ok=True)
 
-        url = (
-            "https://api.twelvedata.com/time_series"
-            f"?symbol={ticker}"
-            "&interval=1day"
-            "&outputsize=5000"
-            f"&apikey={TWELVE_DATA_API_KEY}"
-        )
+    csv_path = Path("data") / f"{ticker.replace('.', '_')}_5y.csv"
+
+    # CSV already exists
+    if csv_path.exists():
+
+        st.success("Dataset loaded from local storage.")
+
+        df = pd.read_csv(csv_path)
+
+        st.write(f"Rows: {len(df)}")
+
+        st.dataframe(df.head())
+
+    else:
 
         try:
-            response = requests.get(url, timeout=60)
-            data = response.json()
 
-            if "values" not in data:
-                st.error(data.get("message", "Unable to download data."))
+            with st.spinner("Downloading from Yahoo Finance..."):
+
+                df = yf.download(
+                    ticker,
+                    period="5y",
+                    interval="1d",
+                    auto_adjust=False,
+                    progress=False,
+                    threads=False
+                )
+
+            if df.empty:
+                st.error("No data found.")
                 st.stop()
 
-            df = pd.DataFrame(data["values"])
+            if isinstance(df.columns, pd.MultiIndex):
+                df.columns = df.columns.get_level_values(0)
 
-            # Rename columns
-            df.rename(columns={
-                "datetime": "Date",
-                "open": "Open",
-                "high": "High",
-                "low": "Low",
-                "close": "Close",
-                "volume": "Volume"
-            }, inplace=True)
+            df.reset_index(inplace=True)
 
-            # Convert datatypes
-            df["Date"] = pd.to_datetime(df["Date"])
+            df.to_csv(csv_path, index=False)
 
-            numeric_cols = ["Open", "High", "Low", "Close", "Volume"]
-
-            for col in numeric_cols:
-                df[col] = pd.to_numeric(df[col], errors="coerce")
-
-            # Sort oldest -> newest
-            df.sort_values("Date", inplace=True)
-            df.reset_index(drop=True, inplace=True)
-
-            # Save CSV
-            Path("data").mkdir(exist_ok=True)
-
-            file_path = Path("data") / f"{ticker.replace('.', '_')}_5y.csv"
-
-            df.to_csv(file_path, index=False)
-
-            st.session_state["dataset_path"] = str(file_path)
-
-            st.success(f"Saved to {file_path}")
+            st.success("Dataset downloaded and saved.")
 
             st.dataframe(df.head())
 
-            # Upload to backend
-            with open(file_path, "rb") as f:
-
-                upload_response = requests.post(
-                    f"{BACKEND_URL}/upload",
-                    files={"file": f},
-                    timeout=90
-                )
-
-            if upload_response.status_code == 200:
-
-                st.success("Dataset uploaded successfully!")
-
-                profile_response = requests.get(
-                    f"{BACKEND_URL}/profile",
-                    timeout=120
-                )
-
-                if profile_response.status_code == 200:
-                    st.success("Profile generated successfully.")
-                else:
-                    st.warning(profile_response.text)
-
-            else:
-                st.error(upload_response.text)
-
         except Exception as e:
-            st.error(f"Error: {e}")
+
+            st.error(f"Download failed: {e}")
+
+            if csv_path.exists():
+
+                st.info("Using previously saved dataset.")
+
+                df = pd.read_csv(csv_path)
+
+                st.dataframe(df.head())
