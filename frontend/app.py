@@ -20,7 +20,7 @@ css_file = Path(__file__).parent / "assets" / "style.css"
 if css_file.exists() :
     with open(css_file) as f :
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html = True)
-uploaded_file = st.file.uploader("Upload CSV", type = ["csv"])
+uploaded_file = st.file_uploader("Upload CSV", type = ["csv"])
 if uploaded_file is not None :
     files = {
         "file": (
