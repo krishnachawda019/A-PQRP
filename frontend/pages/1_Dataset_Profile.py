@@ -11,7 +11,6 @@ try:
     profile_response = requests.get(f"{BACKEND_URL}/profile")
     profile_response.raise_for_status()
     response = profile_response.json()
-    st.write(response)
     if response.get("status") == "success":
         profile = response["profile"]
     else :
